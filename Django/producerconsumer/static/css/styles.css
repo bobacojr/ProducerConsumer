@@ -1,0 +1,98 @@
+html {
+    background-color: lightslategray;
+}
+
+#status {
+    width: 350px;
+    margin: 10px;
+}
+
+.main-container {
+    background-color: lightslategray;
+    display: flex;
+    justify-content: space-between;
+    height: 100vh;
+}
+
+.main-header {
+    font-size: 2rem;
+    font-weight: bolder;
+    margin-left: 10px;
+    border: 1px solid #a8b3bd;
+    background-color: #a8b3bd;
+    max-width: 440px;
+    max-height: 70px;
+    text-align: center;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.5);
+}
+
+.right-container {
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+}
+
+.left-container {
+    display: flex;
+    flex: 0 0 20%;
+    margin-top: 0px;
+}
+
+#buffer-header {
+    font-weight: bolder;
+    font-size: 1.1rem;
+    border-bottom: 2px solid black;
+}
+
+.buffer-status-container {
+    display: flex;
+    margin: 10px;
+    padding: 0;
+    max-width: 250px;
+    border: 1px solid #a8b3bd;
+    background-color: #a8b3bd;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.5);
+}
+
+#buffer-status {
+    font-weight: bold;
+    margin: 4px;
+    padding: 6px;
+}
+
+.buffer-value {
+    padding: 6px 0;
+    font-size: 1.0rem;
+}
+
+.button {
+    background-color: #a8b3bd;
+    font-style: bold;
+    color: black;
+    font-weight: bold;
+}
+
+#start-btn {
+    background-color: green;
+}
+
+#terminate-btn {
+    background-color: red;
+}
+
+#main-buttons {
+    display: inline;
+    margin: 10px;
+}
+
+#producer-buttons {
+    display: inline;
+    margin: 10px;
+}
+
+#consumer-buttons {
+    display: inline;
+    margin: 10px;
+}

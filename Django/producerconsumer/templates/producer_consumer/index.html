@@ -1,0 +1,139 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Producer-Consumer Simulation</title>
+        <link rel="stylesheet" type="text/css" href="{% static 'css/styles.css' %}">
+        <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    </head>
+    <body>
+        <div class="main-container">
+            <div class="left-container">
+                <div class="textarea-container">
+                    <textarea id="getTaskOutput" rows="50" cols="65" style="overflow-y: auto; resize: none;" readonly></textarea>
+                </div>
+            </div>
+            <div class="right-container">
+                <h1 class="main-header">
+                    Producer Consumer Simulation
+                </h1>
+                <div class="buffer-status-container">
+                    <dl id="buffer-status">
+                        <div id="buffer-value">
+                            <span id="buffer-header">Buffer Status</span>
+                        </div>
+                        <div class="buffer-value">
+                            <div>
+                                Buffer Count:
+                                <span id="buffer-count">0</span>
+                            </div>
+                        </div>
+                        <div class="buffer-value">
+                            <div>
+                                Buffer Size: 
+                                <span id="buffer-size">10</span>
+                            </div>
+                        </div>
+                        <div class="buffer-value">
+                            <div>Producer Sleep Time: 
+                                <span id="producer-sleep">1.0</span>
+                            </div>
+                        </div>
+                        <div class="buffer-value">
+                            <div>Consumer Sleep Time: 
+                                <span id="consumer-sleep">1.5</span>
+                            </div>
+                        </div>
+                    </dl>
+                </div>
+                <div id="main-buttons">
+                    <button class="button" id="start-btn">Start Simulation</button>
+                    <button class="button" id="terminate-btn">Terminate Simulation</button>
+                </div>
+                <div id="producer-buttons">
+                    <button class="button" id="a-btn">Producer Sleep +0.25</button>
+                    <button class="button" id="z-btn">Producer Sleep -0.25</button>
+                </div>
+                <div id="consumer-buttons">
+                    <button class="button" id="s-btn">Consumer Sleep +0.25</button>
+                    <button class="button" id="x-btn">Consumer Sleep -0.25</button>
+                </div>
+                <textarea id="status" rows="5" cols="1" style="overflow-y: auto; resize: none;" readonly></textarea>
+            </div>
+        </div>
+    </body>
+</html>
+<script>
+    $(document).ready(() => {
+        let fetchInterval; // Holds interval ID
+        $('#start-btn').click(() => {
+            $('#getTaskOutput').val('');
+            const bufferCount = $('#buffer-count').text();
+            const bufferSize = $('#buffer-size').text();
+            const producerSleepTime = $('#producer-sleep').text();
+            const consumerSleepTime = $('#consumer-sleep').text();
+            
+            clearInterval(fetchInterval); // Stop fetching output while starting new
+
+            $.post('{% url "startSimulation" %}', {
+                bufferSize: bufferSize,
+                producerSleepTime: producerSleepTime,
+                consumerSleepTime: consumerSleepTime
+            }, (data) => {
+                $('#status').text('Simulation started');
+            });
+        });
+
+        // Grab output from celery workers producer and consumer
+        function updateCeleryOutput() {
+            fetch('getTaskOutput/')
+                .then(response => response.json())
+                .then(data => {
+                    $('#getTaskOutput').val(data.output);
+                })
+                .catch(error => {
+                    console.error('Error fetching Celery output:', error);
+                });
+        }
+        setInterval(updateCeleryOutput, 500);
+
+        // Call once immediately to populate initial data
+        updateCeleryOutput();
+
+        // Terminate Simulation
+        $('#terminate-btn').click(() => {
+            $.post('{% url "terminateSimulation" %}', (data) => {
+                $('#status').text('Simulation terminated');
+            });
+        });
+
+        // Adjust Sleep Times
+        const adjustSleep = (producer, increase) => {
+            $.post('{% url "adjustSleepTime" %}', {
+                producer: producer,
+                increase: increase,
+            }, (data) => {
+                $('#status').text('Sleep time adjusted');
+                $('#producer-sleep').text(data.producerSleepTime);
+                $('#consumer-sleep').text(data.consumerSleepTime);
+            });
+        };
+        $('#a-btn').click(() => adjustSleep(true, true));
+        $('#z-btn').click(() => adjustSleep(true, false));
+        $('#s-btn').click(() => adjustSleep(false, true));
+        $('#x-btn').click(() => adjustSleep(false, false));
+        
+        // Update Buffer Status
+        const updateBufferStatus = () => {
+            $.get('{% url "getBufferStatus" %}', (data) => {
+                $('#buffer-count').text(data.count);
+                $('#buffer-size').text(data.bufferSize);
+                $('#producer-sleep').text(data.producerSleepTime);
+                $('#consumer-sleep').text(data.consumerSleepTime);
+        });
+    };
+    setInterval(updateBufferStatus, 500);
+});
+</script>
