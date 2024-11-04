@@ -70,29 +70,20 @@ html {
 .button {
     background-color: #a8b3bd;
     font-style: bold;
-    color: black;
+    border: 1px solid #a8b3bd;
     font-weight: bold;
+    display: inline;
+    margin: 10px;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.5);
 }
 
 #start-btn {
     background-color: green;
+    border: 1px solid green;
 }
 
 #terminate-btn {
     background-color: red;
-}
-
-#main-buttons {
-    display: inline;
-    margin: 10px;
-}
-
-#producer-buttons {
-    display: inline;
-    margin: 10px;
-}
-
-#consumer-buttons {
-    display: inline;
-    margin: 10px;
+    border: 1px solid red;
 }

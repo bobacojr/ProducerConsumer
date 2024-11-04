@@ -9,4 +9,5 @@ urlpatterns = [
     path('terminate/', views.terminateSimulation, name='terminateSimulation'),
     path('status/', views.getBufferStatus, name='getBufferStatus'),
     path('getTaskOutput/', views.getTaskOutput, name='getTaskOutput'),
+    path('adjustBufferSize/', views.adjustBufferSize, name='adjustBufferSize')
 ]

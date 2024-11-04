@@ -60,6 +60,10 @@
                     <button class="button" id="s-btn">Consumer Sleep +0.25</button>
                     <button class="button" id="x-btn">Consumer Sleep -0.25</button>
                 </div>
+                <div id="buffersize-button-container">
+                    <button class="button" id="buffersize-add-button">Buffer Size +2</button>
+                    <button class="button" id="buffersize-subtract-button">Buffer Size -2</button>
+                </div>
                 <textarea id="status" rows="5" cols="1" style="overflow-y: auto; resize: none;" readonly></textarea>
             </div>
         </div>
@@ -67,8 +71,10 @@
 </html>
 <script>
     $(document).ready(() => {
+        let isSimRunning = false;
         let fetchInterval; // Holds interval ID
         $('#start-btn').click(() => {
+            isSimRunning = true;
             $('#getTaskOutput').val('');
             const bufferCount = $('#buffer-count').text();
             const bufferSize = $('#buffer-size').text();
@@ -105,8 +111,39 @@
         // Terminate Simulation
         $('#terminate-btn').click(() => {
             $.post('{% url "terminateSimulation" %}', (data) => {
+                isSimRunning = false;
                 $('#status').text('Simulation terminated');
             });
+        });
+
+        $('#buffersize-add-button').click (() => {
+            if (!isSimRunning) {
+                const currentSize = parseInt($('#buffer-size').text())
+                const newSize = currentSize + 2;
+                $.post('{% url "adjustBufferSize" %}', {
+                    newSize : newSize
+                }, (data) => {
+                    $('#buffer-size').text(data.newBufferSize)
+                    $('#status').text('Buffer Size increased to ' + data.newBufferSize)
+                });
+            } else {
+                $('#status').text('Cannot change Buffer Size while in a Simulation')
+            }
+        });
+        
+        $('#buffersize-subtract-button').click (() => {
+            if (!isSimRunning) {
+                const currentSize = parseInt($('#buffer-size').text())
+                const newSize = currentSize - 2;
+                $.post('{% url "adjustBufferSize" %}', {
+                    newSize : newSize
+                }, (data) => {
+                    $('#buffer-size').text(data.newBufferSize)
+                    $('#status').text('Buffer Size increased to ' + data.newBufferSize)
+                });
+            } else {
+                $('#status').text('Cannot change Buffer Size while in a Simulation')
+            }
         });
 
         // Adjust Sleep Times

@@ -92,6 +92,23 @@ def terminateSimulation(request):
             return JsonResponse({'status': f'Error: {str(e)}'}, status=500)
     else:
         return JsonResponse({'status': 'Invalid request method'}, status=405)
+    
+@csrf_exempt
+def adjustBufferSize(request):
+    if request.method == 'POST':
+        newSize = int(request.POST.get('newSize'))
+        buffer = shb.objects.get(pk=1)
+
+        buffer.bufferSize = newSize
+        buffer.save()
+
+        return JsonResponse({
+            'newBufferSize': buffer.bufferSize
+        })
+    else:
+        return JsonResponse({'error': 'Invalid request method'}, status=400)
+
+            
 
 @csrf_exempt
 def getBufferStatus(request):
